@@ -3,7 +3,7 @@ import {ref} from "vue"
 import {type Ref} from "vue"
 import MarioAnimation from './components/MarioAnimation.vue'
 
-const serverUrl = 'https://websocket-multiplayer-demo.onrender.com'
+const serverUrl = 'wss://websocket-multiplayer-demo.onrender.com'
 const socket = new WebSocket(serverUrl)
 const clicks2 = ref(0)
 const clicks1 = ref(0)
