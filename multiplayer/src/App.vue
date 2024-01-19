@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref} from "vue"
+import {type Ref} from "vue"
 import MarioAnimation from './components/MarioAnimation.vue'
 
 const serverUrl = 'https://websocket-multiplayer-demo.onrender.com'
@@ -8,7 +9,7 @@ const clicks2 = ref(0)
 const clicks1 = ref(0)
 const player = ref(undefined)
 const state = ref('WAITING')
-const winner = ref(undefined)
+const winner: Ref<boolean | undefined> = ref(undefined)
 
 const musicPlaying = ref(false)
 const music = new Audio('/music.mp3')
@@ -38,7 +39,7 @@ socket.addEventListener('open', function(){
 })
 
 let clicks = ref(0)
-const addClick = (id) => { clicks.value++; socket.send(id) }
+const addClick = (id: string) => { clicks.value++; socket.send(id) }
 const retryGame = () => {
   socket.send('RETRY')
 }
