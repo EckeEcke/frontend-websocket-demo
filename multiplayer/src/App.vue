@@ -15,6 +15,8 @@ const winner: Ref<boolean | undefined> = ref(undefined)
 
 const musicPlaying = ref(false)
 const music = new Audio('/music.mp3')
+const winMusic = new Audio('/victory.wav')
+const loseMusic = new Audio('/lose.wav')
 const countDown = ref(3)
 let countDownInterval: any = ref(false)
 const runCountDown = () => {
@@ -64,8 +66,14 @@ const retryGame = () => {
 }
 
 function getWinner() {
-  if(state.value === `PLAYER${player.value}_WON`) winner.value = true
-  else if (state.value === 'PLAYER1_WON' || state.value === 'PLAYER2_WON') winner.value = false
+  if(state.value === `PLAYER${player.value}_WON`) {
+    winner.value = true
+    winMusic.play()
+  }
+  else if (state.value === 'PLAYER1_WON' || state.value === 'PLAYER2_WON') {
+    winner.value = false
+    loseMusic.play()
+  }
   if(state.value !== 'GAME_RUNNING') musicPlaying.value = false
 }
 </script>
@@ -85,7 +93,7 @@ function getWinner() {
     </div>
   </div>
   <div class="race-wrapper">
-    <div class="countdown" :class="{'fade-out': countDown === 0}">{{ countDown }}</div>
+    <div class="countdown highlight-font" :class="{'fade-out': countDown === 0, 'hidden': state === 'WAITING'}">{{ countDown }}</div>
     <div class="mario-wrapper">
       <MarioAnimation :is-player-2="false" :clicks="clicks1" />
       <MarioAnimation :is-player-2="true" :clicks="clicks2" />
@@ -93,9 +101,9 @@ function getWinner() {
     <img class="finish-line" src="/finishline.png">
     <div class="finish"></div>
     <div class="message">
-      <h2 v-if="winner === true">YOU WON!</h2>
-      <h2 v-if="winner === false">YOU LOST!</h2>
-      <button class="button" v-if="winner !== undefined" @click="retryGame">TRY AGAIN</button>
+      <h2 v-if="winner === true" class="highlight-font">YOU WON</h2>
+      <h2 v-if="winner === false" class="highlight-font">YOU LOST</h2>
+      <button class="button" v-if="winner !== undefined" @click="retryGame">PLAY AGAIN</button>
     </div>
   </div>
   <div class="player" v-if="state === 'GAME_READY' || state === 'GAME_RUNNING'">
@@ -235,12 +243,20 @@ button {
   position: absolute;
   top: 50%;
   left: 50%;
+  z-index: 10;
   transform: translate(-50%, -50%);
   text-align: center;
+  width: 210px;
 }
 
 .player {
   margin-top: 16px;
+}
+
+.highlight-font {
+  font-size: 32px;
+  color: red;
+  text-shadow: -2px -2px 0 yellow, 2px -2px 0 yellow, -2px 2px 0 yellow, 2px 2px 0 yellow;
 }
 
 .countdown {
@@ -250,8 +266,6 @@ button {
   transform: translateX(-50%);
   z-index: 1;
   font-size: 64px;
-  color: red;
-  text-shadow: -2px -2px 0 yellow, 2px -2px 0 yellow, -2px 2px 0 yellow, 2px 2px 0 yellow;
 }
 
 .hidden {
@@ -261,7 +275,7 @@ button {
 .fade-out {
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0s 2s, opacity 2s linear;
+  transition: visibility 0s 1s, opacity 1s linear;
 }
 
 @keyframes blink {
