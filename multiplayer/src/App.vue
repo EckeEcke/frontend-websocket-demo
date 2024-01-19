@@ -16,7 +16,7 @@ const winner: Ref<boolean | undefined> = ref(undefined)
 const musicPlaying = ref(false)
 const music = new Audio('/music.mp3')
 const countDown = ref(3)
-let countDownInterval = ref(false)
+let countDownInterval: any = ref(false)
 const runCountDown = () => {
   if(countDown.value > 0) {
     countDown.value--
