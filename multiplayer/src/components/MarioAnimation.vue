@@ -1,7 +1,7 @@
 <template>
   <div ref="marioBox" class="mario-box">
     <div class="position-relative">
-      <img ref="marioSprite" class="mario-sprite"  :class="isPlayer2 ? 'player2' : ''" src="/mariosprites-walking.png">
+      <img ref="marioSprite" class="mario-sprite"  :class="isPlayer2 ? 'player2' : ''" src="/mariosprites-walking.png" draggable="false">
     </div>
   </div>
 </template>
