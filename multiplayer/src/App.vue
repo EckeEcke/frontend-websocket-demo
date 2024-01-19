@@ -80,6 +80,9 @@ function getWinner() {
     <button class="button" @click="addClick('click1')" v-if="player === 1">CLICK TO RUN</button>
     <button class="button" @click="addClick('click2')" v-if="player === 2">CLICK TO RUN</button>
   </div>
+  <div class="loading" v-else>
+    WAITING FOR PLAYER<span>.</span><span>.</span><span>.</span>
+  </div>
 
 </template>
 
@@ -108,6 +111,12 @@ h2 {
 button, .scoredisplay {
   font-weight: bolder;
   text-align: center;
+}
+
+img {
+  pointer-events: none;
+  user-select: none;
+  user-drag: none;
 }
 
 button {
@@ -201,5 +210,32 @@ button {
 
 .player {
   margin-top: 16px;
+}
+
+@keyframes blink {
+  0% {
+    opacity: .2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: .2;
+  }
+}
+
+.loading span {
+  animation-name: blink;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.loading span:nth-child(2) {
+  animation-delay: .2s;
+}
+
+.loading span:nth-child(3) {
+  animation-delay: .4s;
 }
 </style>
