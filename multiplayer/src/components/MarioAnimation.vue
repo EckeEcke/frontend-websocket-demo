@@ -6,7 +6,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const props = defineProps({
   isPlayer2: Boolean,
   clicks: Number,
@@ -44,10 +44,10 @@ function animateMario(){
   }
 }
 
-let animationInterval
+let animationInterval: any
 watch(() => props.clicks, (newValue, oldValue) => {
   movingBox()
-  if(!isRunning.value && newValue > 0) {
+  if(!isRunning.value && newValue && newValue > 0) {
     isRunning.value = true
     animationInterval = setInterval(animateMario, 102);
   }
