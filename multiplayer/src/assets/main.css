@@ -5,9 +5,17 @@
   font-family: 'pixel';
   src: url('@/assets/slkscr.ttf') format('truetype');
 }
+:root {
+  --orange: #FAA613;
+  --green: #0C8346;
+  --red: #FF0035;
+  --dark: #022B3A;
+  --background: #05668d;
+}
 
 #app {
-  max-width: 1280px;
+  min-width: 100vw;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,4 +23,5 @@
   padding: 2rem;
   font-family: 'New Super Mario Font U';
   font-weight: normal;
+  background: var(--background);
 }
