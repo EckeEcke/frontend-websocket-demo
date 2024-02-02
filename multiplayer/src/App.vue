@@ -5,6 +5,7 @@ import MarioAnimation from './components/MarioAnimation.vue'
 
 const serverUrl = 'wss://websocket-multiplayer-demo.onrender.com'
 const socket = new WebSocket(serverUrl)
+const connectedToSocket = ref(false)
 const isPlayer1 = computed(() => player.value === 1)
 const isPlayer2 = computed(() => player.value === 2)
 const clicks2 = ref(0)
@@ -52,6 +53,7 @@ socket.addEventListener('message', function (event) {
 
 socket.addEventListener('open', function(){
   console.log('connected')
+  connectedToSocket.value = true
 })
 
 let clicks = ref(0)
@@ -111,7 +113,7 @@ function getWinner() {
     <button class="button" @click="addClick('click2')" v-if="player === 2">CLICK TO RUN</button>
   </div>
   <div class="loading" v-else>
-    WAITING FOR PLAYER<span>.</span><span>.</span><span>.</span>
+    {{ connectedToSocket ? 'WAITING FOR PLAYER' : 'WAITING FOR SERVER' }}<span>.</span><span>.</span><span>.</span>
   </div>
 
 </template>
