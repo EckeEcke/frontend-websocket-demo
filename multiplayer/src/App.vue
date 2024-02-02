@@ -81,44 +81,46 @@ function getWinner() {
 </script>
 
 <template>
-  <h1>Super Mario<br>Clicky Clicky</h1>
-  <div class="scoreboard">
-    <div>
-      <div class="you" :class="{'hidden': isPlayer2}">&#128315;</div>
-      <h2>P1</h2>
-      <div class="scoredisplay">{{ clicks1 }}</div>
+  <div class="game-container">
+    <h1>Super Mario<br>Clicky Clicky</h1>
+    <div class="scoreboard">
+      <div :class="{'current-player': isPlayer1}">
+        <h2>PLAYER1:</h2>
+        <div class="scoredisplay">{{ clicks1 }}</div>
+      </div>
+      <div :class="{'current-player': isPlayer2}">
+        <h2>PLAYER2:</h2>
+        <div class="scoredisplay">{{ clicks2 }}</div>
+      </div>
     </div>
-    <div>
-      <div class="you" :class="{'hidden': isPlayer1}">&#128315;</div>
-      <h2>P2</h2>
-      <div class="scoredisplay">{{ clicks2 }}</div>
+    <div class="race-wrapper">
+      <div class="countdown highlight-font" :class="{'fade-out': countDown === 0, 'hidden': state === 'WAITING'}">{{ countDown }}</div>
+      <div class="mario-wrapper">
+        <MarioAnimation :is-player-2="false" :clicks="clicks1" />
+        <div class="white-separator" />
+        <MarioAnimation :is-player-2="true" :clicks="clicks2" />
+      </div>
+      <img class="finish-line" src="/finishline.png">
+      <div class="finish">
+        <div class="white-separator" />
+      </div>
+      <div class="message">
+        <h2 v-if="winner === true" class="highlight-font">YOU WON</h2>
+        <h2 v-if="winner === false" class="highlight-font">YOU LOST</h2>
+        <button class="button" v-if="winner !== undefined" @click="retryGame">PLAY AGAIN</button>
+      </div>
+    </div>
+    <div class="player" v-if="state === 'GAME_READY' || state === 'GAME_RUNNING'">
+      <button class="button" @click="addClick('click1')" v-if="player === 1">CLICK TO RUN</button>
+      <button class="button" @click="addClick('click2')" v-if="player === 2">CLICK TO RUN</button>
+    </div>
+    <div class="loading" v-else>
+      {{ connectedToSocket ? 'WAITING FOR PLAYER' : 'WAITING FOR SERVER' }}<span>.</span><span>.</span><span>.</span>
     </div>
   </div>
-  <div class="race-wrapper">
-    <div class="countdown highlight-font" :class="{'fade-out': countDown === 0, 'hidden': state === 'WAITING'}">{{ countDown }}</div>
-    <div class="mario-wrapper">
-      <MarioAnimation :is-player-2="false" :clicks="clicks1" />
-      <MarioAnimation :is-player-2="true" :clicks="clicks2" />
-    </div>
-    <img class="finish-line" src="/finishline.png">
-    <div class="finish"></div>
-    <div class="message">
-      <h2 v-if="winner === true" class="highlight-font">YOU WON</h2>
-      <h2 v-if="winner === false" class="highlight-font">YOU LOST</h2>
-      <button class="button" v-if="winner !== undefined" @click="retryGame">PLAY AGAIN</button>
-    </div>
-  </div>
-  <div class="player" v-if="state === 'GAME_READY' || state === 'GAME_RUNNING'">
-    <button class="button" @click="addClick('click1')" v-if="player === 1">CLICK TO RUN</button>
-    <button class="button" @click="addClick('click2')" v-if="player === 2">CLICK TO RUN</button>
-  </div>
-  <div class="loading" v-else>
-    {{ connectedToSocket ? 'WAITING FOR PLAYER' : 'WAITING FOR SERVER' }}<span>.</span><span>.</span><span>.</span>
-  </div>
-
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .scoreboard {
   display: flex;
   justify-content: center;
@@ -127,31 +129,41 @@ function getWinner() {
   padding: 16px;
   color: white;
   width: 258px;
+
+  & div {
+    display: flex;
+    gap: 4px;
+  }
+
+  & .current-player {
+    border-bottom: 4px solid white;
+     & .scoredisplay,
+        h2 {
+          color: var(--orange);
+     }
+  }
 }
 
 h1 {
   font-family: 'New Super Mario Font U', sans-serif;
+  text-align: center;
   margin-bottom: 16px;
-  color: white;
+  color: var(--red);
+  text-shadow: -2px -2px 0 yellow, 2px -2px 0 yellow, -2px 2px 0 yellow, 2px 2px 0 yellow;
 }
 
 h2 {
   text-align: center;
   color: white;
   font-weight: bolder;
-}
-button, .scoredisplay, .you {
-  font-weight: bolder;
-  text-align: center;
-}
-
-.you {
-  font-size: 16px;
-  color: red;
+  font-size: 18px;
+  line-height: 1;
 }
 
 .scoredisplay {
-  font-size: 24px;
+  font-size: 18px;
+  font-weight: bolder;
+  line-height: 1;
 }
 
 img {
@@ -171,22 +183,39 @@ button {
 
 .mario-wrapper {
   width: 184px;
-  background: #378805;
+  border-top: 4px solid white;
+  border-bottom: 4px solid white;
+  background: var(--orange);
+}
+
+.white-separator {
+  height: 24px;
+  width: 100%;
+  border-top: 4px solid white;
+  border-bottom: 4px solid white;
+  background: var(--green);
 }
 
 .finish-line {
   height: 100%;
+  width: 24px;
 }
 .finish {
-  background: #378805;
+  display: flex;
+  align-items: center;
+  background: var(--orange);
+  border-top: 4px solid white;
+  border-bottom: 4px solid white;
   height: 100%;
   width: 50px;
 }
 .race-wrapper {
   display: flex;
-  height: 150px;
+  height: 168px;
   justify-content: flex-start;
   justify-self: center;
+  border-bottom: 8px solid var(--green);
+  border-top: 8px solid var(--green);
 }
 
 .button{
@@ -241,7 +270,7 @@ button {
 .message {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -253,11 +282,13 @@ button {
 
 .player {
   margin-top: 16px;
+  display: flex;
+  justify-content: center;
 }
 
 .highlight-font {
   font-size: 32px;
-  color: red;
+  color: var(--red);
   text-shadow: -2px -2px 0 yellow, 2px -2px 0 yellow, -2px 2px 0 yellow, 2px 2px 0 yellow;
 }
 
@@ -280,16 +311,10 @@ button {
   transition: visibility 0s 1s, opacity 1s linear;
 }
 
-@keyframes blink {
-  0% {
-    opacity: .2;
-  }
-  20% {
-    opacity: 1;
-  }
-  100% {
-    opacity: .2;
-  }
+.loading {
+  margin-top: 8px;
+  text-align: center;
+  color: white;
 }
 
 .loading span {
@@ -305,5 +330,38 @@ button {
 
 .loading span:nth-child(3) {
   animation-delay: .4s;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 800px) {
+  .game-container {
+    margin-top: 20vh;
+    transform: scale(1.6);
+    transform-origin: center;
+  }
+}
+
+@media (min-width: 1400px) {
+  .game-container {
+    margin-top: 25vh;
+    transform: scale(2);
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: .2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: .2;
+  }
 }
 </style>
