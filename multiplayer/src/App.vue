@@ -13,6 +13,7 @@ const clicks2 = ref(0)
 const winner = ref<boolean | undefined>(undefined)
 const countDown = ref(3)
 const musicPlaying = ref(false)
+const sessionIsFull = ref(false)
 
 const isPlayer1 = computed(() => player.value === 1)
 const isPlayer2 = computed(() => player.value === 2)
@@ -65,6 +66,8 @@ const handleGameState = (data: any) => {
         winner.value = won
         won ? winMusic.play() : loseMusic.play()
     }
+
+    sessionIsFull.value = state.value === 'SESSION IS FULL'
 
     if (data.message === 'USER LEFT') {
         location.reload()
@@ -138,6 +141,10 @@ onBeforeUnmount(() => {
 
     <div class="player" v-if="state === 'GAME_READY' || state === 'GAME_RUNNING'">
       <button class="button" @click="addClick">CLICK TO RUN</button>
+    </div>
+
+    <div v-else-if="sessionIsFull">
+      SESSION IS FULL
     </div>
     
     <div class="loading" v-else>
