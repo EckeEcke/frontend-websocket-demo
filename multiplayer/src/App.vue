@@ -149,6 +149,7 @@ onBeforeUnmount(() => {
 .scoreboard {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 16px;
   background: black;
   padding: 16px;
@@ -207,7 +208,7 @@ button {
 }
 
 .mario-wrapper {
-  width: 184px;
+  width: 216px;
   border-top: 4px solid white;
   border-bottom: 4px solid white;
   background: var(--orange);

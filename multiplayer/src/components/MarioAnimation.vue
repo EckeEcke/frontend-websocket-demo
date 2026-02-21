@@ -73,6 +73,10 @@ onMounted(() => {
   z-index: 5;
 }
 
+.position-relative {
+  position: relative;
+}
+
 .mario-sprite {
   position: absolute;
   right: -100px;
