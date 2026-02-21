@@ -67,7 +67,7 @@ const handleGameState = (data: any) => {
         won ? winMusic.play() : loseMusic.play()
     }
 
-    sessionIsFull.value = state.value === 'SESSION IS FULL'
+    sessionIsFull.value = data.message === 'SESSION IS FULL'
 
     if (data.message === 'USER LEFT') {
         location.reload()
