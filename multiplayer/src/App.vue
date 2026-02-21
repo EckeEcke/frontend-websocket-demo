@@ -158,6 +158,7 @@ onBeforeUnmount(() => {
 
   & div {
     display: flex;
+    align-items: center;
     gap: 4px;
   }
 
@@ -215,7 +216,7 @@ button {
 }
 
 .white-separator {
-  height: 24px;
+  height: 32px;
   width: 100%;
   border-top: 4px solid white;
   border-bottom: 4px solid white;
@@ -223,7 +224,7 @@ button {
 }
 
 .finish-line {
-  height: 100%;
+  height: 168px;
   width: 24px;
 }
 .finish {
@@ -232,7 +233,7 @@ button {
   background: var(--orange);
   border-top: 4px solid white;
   border-bottom: 4px solid white;
-  height: 100%;
+  height: 160px;
   width: 50px;
 }
 .race-wrapper {
