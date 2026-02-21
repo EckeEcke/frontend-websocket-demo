@@ -11,36 +11,36 @@ const props = defineProps({
   isPlayer2: Boolean,
   clicks: Number,
 })
-import {onMounted, ref, watch} from "vue";
+import { onMounted, ref, watch } from 'vue'
 const marioBox = ref()
 const marioSprite = ref()
-let marioLeft = 0;
+let marioLeft = 0
 
 function movingBox(){
-  marioBox.value.style.transform = `translateX(${marioLeft}px)`;
-  if(marioLeft<200){
-    marioLeft += 2;
+  marioBox.value.style.transform = `translateX(${marioLeft}px)`
+  if(marioLeft < 200){
+    marioLeft += 2
   }
 
-  if(marioLeft>=200 || props.clicks === 0){
-    marioLeft = 0;
+  if(marioLeft >=200 || props.clicks === 0){
+    marioLeft = 0
   }
 }
 
-let spritesheetPosition = 50;
-let sheetMovement = 50;
+let spritesheetPosition = 50
+let sheetMovement = 50
 
 const isRunning = ref(false)
 function animateMario(){
   spritesheetPosition += sheetMovement;
-  marioSprite.value.style.transform = `translateX(${-spritesheetPosition}px)`;
+  marioSprite.value.style.transform = `translateX(${-spritesheetPosition}px)`
 
   if(spritesheetPosition == 100){
-    sheetMovement = -50;
+    sheetMovement = -50
   }
 
   if(spritesheetPosition == 0){
-    sheetMovement = 50;
+    sheetMovement = 50
   }
 }
 

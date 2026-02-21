@@ -1,88 +1,104 @@
 <script setup lang="ts">
-import {computed, ref} from "vue"
-import {type Ref} from "vue"
+import { computed, ref, onBeforeUnmount } from "vue"
 import MarioAnimation from './components/MarioAnimation.vue'
 
 const serverUrl = 'wss://websocket-multiplayer-demo.onrender.com'
 const socket = new WebSocket(serverUrl)
+
 const connectedToSocket = ref(false)
+const player = ref<number | undefined>(undefined)
+const state = ref('WAITING')
+const clicks1 = ref(0)
+const clicks2 = ref(0)
+const winner = ref<boolean | undefined>(undefined)
+const countDown = ref(3)
+const musicPlaying = ref(false)
+
 const isPlayer1 = computed(() => player.value === 1)
 const isPlayer2 = computed(() => player.value === 2)
-const clicks2 = ref(0)
-const clicks1 = ref(0)
-const player: Ref<number | undefined> = ref(undefined)
-const state = ref('WAITING')
-const winner: Ref<boolean | undefined> = ref(undefined)
 
-const musicPlaying = ref(false)
 const music = new Audio('/music.mp3')
 const winMusic = new Audio('/victory.wav')
 const loseMusic = new Audio('/lose.wav')
-const countDown = ref(3)
-let countDownInterval: any = ref(false)
+
+let countDownInterval: ReturnType<typeof setInterval> | null = null
+
+const stopInterval = () => {
+    if (countDownInterval) {
+        clearInterval(countDownInterval)
+        countDownInterval = null
+    }
+}
+
 const runCountDown = () => {
-  if(countDown.value > 0) {
-    countDown.value--
-  } else {
-    clearInterval(countDownInterval.value)
-    countDownInterval.value = false
-  }
+    if (countDown.value > 0) {
+        countDown.value--
+    } else {
+        stopInterval()
+    }
 }
 
-socket.addEventListener('message', function (event) {
-  const data = JSON.parse(event.data)
-  if(data.player) {player.value = data.player}
-  if(data.clicks1) clicks1.value = data.clicks1
-  if(data.clicks2) clicks2.value = data.clicks2
-  if(data.state) state.value = data.state
-  if(state.value === 'GAME_READY' || state.value === 'GAME_RUNNING') winner.value = undefined
-  if(state.value === 'GAME_READY') {
-    countDown.value = 3
-    clicks1.value = 0
-    clicks2.value = 0
-    if(!countDownInterval.value) countDownInterval.value = setInterval(() => runCountDown(), 1000)
-  }
-  if(state.value === 'GAME_RUNNING' && !musicPlaying.value) {
-    musicPlaying.value = true
-    music.currentTime = 0
-    music.play()
-  }
-  if(data.message === 'USER LEFT') location.reload()
-  getWinner()
-})
+const handleGameState = (data: any) => {
+    if (data.player) player.value = data.player
+    if (data.state) state.value = data.state
+    if (data.clicks1 !== undefined) clicks1.value = data.clicks1
+    if (data.clicks2 !== undefined) clicks2.value = data.clicks2
 
-socket.addEventListener('open', function(){
-  console.log('connected')
-  connectedToSocket.value = true
-})
+    if (state.value === 'GAME_READY') {
+        winner.value = undefined
+        countDown.value = 3
+        stopInterval()
+        countDownInterval = setInterval(runCountDown, 1000)
+    }
 
-let clicks = ref(0)
-const addClick = (id: string) => {
-  if (countDown.value === 0) {
-    clicks.value++;
-    socket.send(id)
-  }
+    if (state.value === 'GAME_RUNNING' && !musicPlaying.value) {
+        musicPlaying.value = true
+        music.currentTime = 0
+        music.play().catch(() => {}) 
+    }
+
+    if (state.value.includes('_WON')) {
+        musicPlaying.value = false
+        music.pause()
+        const won = state.value === `PLAYER${player.value}_WON`
+        winner.value = won
+        won ? winMusic.play() : loseMusic.play()
+    }
+
+    if (data.message === 'USER LEFT') {
+        location.reload()
+    }
 }
+
+socket.addEventListener('message', (event) => {
+    const data = JSON.parse(event.data)
+    handleGameState(data)
+})
+
+socket.addEventListener('open', () => {
+    connectedToSocket.value = true
+})
+
+const addClick = () => {
+    if (countDown.value === 0 && state.value === 'GAME_RUNNING') {
+        socket.send(`click${player.value}`)
+    }
+}
+
 const retryGame = () => {
-  socket.send('RETRY')
+    socket.send('RETRY')
 }
 
-function getWinner() {
-  if(state.value === `PLAYER${player.value}_WON`) {
-    winner.value = true
-    winMusic.play()
-  }
-  else if (state.value === 'PLAYER1_WON' || state.value === 'PLAYER2_WON') {
-    winner.value = false
-    loseMusic.play()
-  }
-  if(state.value !== 'GAME_RUNNING') musicPlaying.value = false
-}
+onBeforeUnmount(() => {
+    stopInterval()
+    music.pause()
+})
 </script>
 
 <template>
   <div class="game-container">
     <h1>Super Mario<br>Clicky Clicky</h1>
+    
     <div class="scoreboard">
       <div :class="{'current-player': isPlayer1}">
         <h2>PLAYER1:</h2>
@@ -93,29 +109,38 @@ function getWinner() {
         <div class="scoredisplay">{{ clicks2 }}</div>
       </div>
     </div>
+
     <div class="race-wrapper">
-      <div class="countdown highlight-font" :class="{'fade-out': countDown === 0, 'hidden': state === 'WAITING'}">{{ countDown }}</div>
+      <div class="countdown highlight-font" 
+           :class="{'fade-out': countDown === 0, 'hidden': state === 'WAITING'}">
+        {{ countDown }}
+      </div>
+      
       <div class="mario-wrapper">
         <MarioAnimation :is-player-2="false" :clicks="clicks1" />
         <div class="white-separator" />
         <MarioAnimation :is-player-2="true" :clicks="clicks2" />
       </div>
+      
       <img class="finish-line" src="/finishline.png">
+      
       <div class="finish">
         <div class="white-separator" />
       </div>
-      <div class="message">
-        <h2 v-if="winner === true" class="highlight-font">YOU WON</h2>
-        <h2 v-if="winner === false" class="highlight-font">YOU LOST</h2>
-        <button class="button" v-if="winner !== undefined" @click="retryGame">PLAY AGAIN</button>
+
+      <div class="message" v-if="winner !== undefined">
+        <h2 class="highlight-font">{{ winner ? 'YOU WON' : 'YOU LOST' }}</h2>
+        <button class="button" @click="retryGame">PLAY AGAIN</button>
       </div>
     </div>
+
     <div class="player" v-if="state === 'GAME_READY' || state === 'GAME_RUNNING'">
-      <button class="button" @click="addClick('click1')" v-if="player === 1">CLICK TO RUN</button>
-      <button class="button" @click="addClick('click2')" v-if="player === 2">CLICK TO RUN</button>
+      <button class="button" @click="addClick">CLICK TO RUN</button>
     </div>
+    
     <div class="loading" v-else>
-      {{ connectedToSocket ? 'WAITING FOR PLAYER' : 'WAITING FOR SERVER' }}<span>.</span><span>.</span><span>.</span>
+      {{ connectedToSocket ? 'WAITING FOR PLAYER' : 'WAITING FOR SERVER' }}
+      <span>.</span><span>.</span><span>.</span>
     </div>
   </div>
 </template>
