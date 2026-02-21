@@ -81,6 +81,7 @@ socket.addEventListener('open', () => {
 })
 
 const addClick = () => {
+    if (countDown.value > 0) return
     if (state.value === 'GAME_RUNNING' || state.value === 'GAME_READY') {
         socket.send(`click${player.value}`)
     }
