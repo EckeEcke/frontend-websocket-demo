@@ -39,7 +39,7 @@ function animateMario(){
     sheetMovement = -50
   }
 
-  if(spritesheetPosition ==0 0){
+  if(spritesheetPosition === 0){
     sheetMovement = 50
   }
 }
