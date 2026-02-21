@@ -237,6 +237,7 @@ button {
   width: 50px;
 }
 .race-wrapper {
+  position: relative;
   display: flex;
   height: 168px;
   justify-content: flex-start;
