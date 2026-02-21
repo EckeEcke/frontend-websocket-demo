@@ -143,7 +143,7 @@ onBeforeUnmount(() => {
       <button class="button" @click="addClick">CLICK TO RUN</button>
     </div>
 
-    <div v-else-if="sessionIsFull">
+    <div class="loading" v-else-if="sessionIsFull">
       SESSION IS FULL
     </div>
     
