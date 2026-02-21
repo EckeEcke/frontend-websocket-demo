@@ -81,8 +81,7 @@ socket.addEventListener('open', () => {
 })
 
 const addClick = () => {
-  console.log("clicked")
-    if (state.value === 'GAME_RUNNING') {
+    if (state.value === 'GAME_RUNNING' || state.value === 'GAME_READY') {
         socket.send(`click${player.value}`)
     }
 }
