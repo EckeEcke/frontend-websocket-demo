@@ -164,6 +164,8 @@ onBeforeUnmount(() => {
   padding: 16px;
   color: white;
   width: 258px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 
   & div {
     display: flex;
@@ -253,6 +255,8 @@ button {
   justify-self: center;
   border-bottom: 8px solid var(--green);
   border-top: 8px solid var(--green);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 .button{
@@ -309,7 +313,7 @@ button {
   flex-direction: column;
   gap: 16px;
   position: absolute;
-  top: 50%;
+  top: 35%;
   left: 50%;
   z-index: 10;
   transform: translate(-50%, -50%);

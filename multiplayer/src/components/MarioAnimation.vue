@@ -11,7 +11,7 @@ const props = defineProps({
   isPlayer2: Boolean,
   clicks: Number,
 })
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 const marioBox = ref()
 const marioSprite = ref()
 let marioLeft = 0
@@ -35,11 +35,11 @@ function animateMario(){
   spritesheetPosition += sheetMovement;
   marioSprite.value.style.transform = `translateX(${-spritesheetPosition}px)`
 
-  if(spritesheetPosition == 100){
+  if(spritesheetPosition === 100){
     sheetMovement = -50
   }
 
-  if(spritesheetPosition == 0){
+  if(spritesheetPosition ==0 0){
     sheetMovement = 50
   }
 }
@@ -55,11 +55,6 @@ watch(() => props.clicks, (newValue, oldValue) => {
     clearInterval(animationInterval)
     isRunning.value = false
   }
-})
-
-onMounted(() => {
-
-  console.log(marioBox.value.style)
 })
 
 
