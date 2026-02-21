@@ -44,6 +44,7 @@ const handleGameState = (data: any) => {
     if (data.clicks1 !== undefined) clicks1.value = data.clicks1
     if (data.clicks2 !== undefined) clicks2.value = data.clicks2
 
+    console.log(data) 
     if (state.value === 'GAME_READY') {
         winner.value = undefined
         countDown.value = 3
@@ -80,6 +81,7 @@ socket.addEventListener('open', () => {
 })
 
 const addClick = () => {
+  console.log("clicked")
     if (state.value === 'GAME_RUNNING') {
         socket.send(`click${player.value}`)
     }
