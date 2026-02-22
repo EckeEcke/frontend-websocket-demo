@@ -45,10 +45,11 @@ const handleGameState = (data: any) => {
     if (data.clicks1 !== undefined) clicks1.value = data.clicks1
     if (data.clicks2 !== undefined) clicks2.value = data.clicks2
 
-    console.log(data) 
     if (state.value === 'GAME_READY') {
         winner.value = undefined
         countDown.value = 3
+        clicks1.value = 0
+        clicks2.value = 0
         stopInterval()
         countDownInterval = setInterval(runCountDown, 1000)
     }
@@ -311,7 +312,6 @@ button {
 .message {
   display: flex;
   flex-direction: column;
-  gap: 16px;
   position: absolute;
   top: 35%;
   left: 50%;
