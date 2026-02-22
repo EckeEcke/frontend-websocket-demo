@@ -55,6 +55,7 @@ watch(() => props.clicks, (newValue, oldValue) => {
     clearInterval(animationInterval)
     isRunning.value = false
     animateMario()
+    movingBox()
   }
 })
 
