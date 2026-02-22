@@ -22,4 +22,5 @@ body {
   font-family: 'New Super Mario Font U';
   font-weight: normal;
   background: var(--background);
+  overflow: auto;
 }
