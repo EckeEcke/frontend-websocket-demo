@@ -383,7 +383,7 @@ button {
   .game-container {
     margin-top: 20vh;
     transform: scale(1.6);
-    transform-origin: bottom;
+    transform-origin: center;
   }
 }
 
