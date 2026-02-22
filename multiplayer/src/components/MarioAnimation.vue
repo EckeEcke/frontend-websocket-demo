@@ -54,6 +54,7 @@ watch(() => props.clicks, (newValue, oldValue) => {
   if(newValue === 0){
     clearInterval(animationInterval)
     isRunning.value = false
+    spritesheetPosition = 0
     animateMario()
     movingBox()
   }
