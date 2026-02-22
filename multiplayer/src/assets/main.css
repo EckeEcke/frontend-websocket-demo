@@ -23,7 +23,7 @@ body {
   font-family: 'New Super Mario Font U';
   font-weight: normal;
   background: var(--background);
-  background-image: src('../assets/images/background.png');
+  background-image: src('/mario-background.png');
   background-size: cover;
   overflow: auto;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
